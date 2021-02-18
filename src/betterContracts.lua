@@ -22,13 +22,6 @@ function BetterContracts:loadMap()
 
     MissionManager.AI_PRICE_MULTIPLIER = 2
 
-    MissionManager.hasFarmActiveMission = Utils.overwrittenFunction(MissionManager.hasFarmActiveMission, BetterContracts.hasFarmActiveMission)
-
-    InGameMenuContractsFrame.onFrameOpen = Utils.appendedFunction(InGameMenuContractsFrame.onFrameOpen, BetterContracts.onContractsFrameOpen)
-    InGameMenuContractsFrame.onFrameClose = Utils.appendedFunction(InGameMenuContractsFrame.onFrameClose, BetterContracts.onContractsFrameClose)
-
-    g_currentMission.inGameMenu.onClickMenuExtra1 = Utils.overwrittenFunction(g_currentMission.inGameMenu.onClickMenuExtra1, BetterContracts.onClickMenuExtra1)
-
     --addConsoleCommand("dcDebugMissions", "", "debugMissions", self)
 end
 
@@ -47,44 +40,6 @@ function BetterContracts:update(dt)
         end
         self.fieldToMissionUpdateTimer = 0
     end
-end
-
-function BetterContracts:onContractsFrameOpen()
-    -- add button for contracts refreshing
-    if g_currentMission.inGameMenu.refreshContractsButton == nil then
-        g_currentMission.inGameMenu.refreshContractsButton = g_currentMission.inGameMenu.menuButton[1]:clone(self)
-        g_currentMission.inGameMenu.refreshContractsButton.onClickCallback = BetterContracts.onClickRefreshCallback
-        g_currentMission.inGameMenu.refreshContractsButton:setText(g_i18n:getText("refresh_contracts"))
-        g_currentMission.inGameMenu.refreshContractsButton:setInputAction("MENU_EXTRA_1")
-        g_currentMission.inGameMenu.menuButton[1].parent:addElement(g_currentMission.inGameMenu.refreshContractsButton)
-    end
-end
-
-function BetterContracts:onContractsFrameClose()
-    -- remove button for contracts refreshing
-    if g_currentMission.inGameMenu.refreshContractsButton ~= nil then
-        g_currentMission.inGameMenu.refreshContractsButton:unlinkElement()
-        g_currentMission.inGameMenu.refreshContractsButton:delete()
-        g_currentMission.inGameMenu.refreshContractsButton = nil
-    end
-end
-
-function BetterContracts:onClickMenuExtra1(superFunc, ...)
-    if superFunc ~= nil then
-        superFunc(self, ...)
-    end
-    if self.refreshContractsButton ~= nil then
-        self.refreshContractsButton.onClickCallback(self)
-    end
-end
-
-function BetterContracts:onClickRefreshCallback()
-    BetterContractsRefreshEvent.sendEvent()
-end
-
--- this should grant to accept multiple contracts
-function BetterContracts:hasFarmActiveMission()
-    return false
 end
 
 function BetterContracts.colorForFarm(farmId)
